@@ -1,0 +1,120 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../vaadin-text-field/vaadin-text-field.html">
+<link rel="import" href="../vaadin-icons/vaadin-icons.html">
+
+
+<dom-module id="siptec-mod-cantidad">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      iron-icon {
+        cursor: pointer;
+        text-align: center;
+      }
+
+      iron-icon[disabled] {
+        cursor: default;
+        opacity: 0.1;
+      }
+
+      vaadin-text-field {
+        --vaadin-text-field-default-width: 6em;
+        flex: auto;
+        display: flex;
+      }
+    </style>
+    <vaadin-text-field id="input" theme="align-center" label="[[label]]" value="{{value}}" disabled=[[disabled]]
+      prevent-invalid-input readonly="[[!editable]]" pattern$=[[pattern]]>
+      <iron-icon icon="vaadin:minus" slot="prefix" on-click="_minus" disabled$="[[_minusDisabled(value, min, max, disabled, readonly)]]"></iron-icon>
+      <iron-icon icon="vaadin:plus" slot="suffix" on-click="_plus" disabled$="[[_plusDisabled(value, min, max, disabled, readonly)]]"></iron-icon>
+    </vaadin-text-field>
+  </template>
+
+  <script>
+    /**
+     * `siptec-mod-cantidad`
+     * change amount simulate spinner
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class SiptecModCantidad extends Polymer.Element {
+      static get is() { return 'siptec-mod-cantidad'; }
+      static get properties() {
+        return {
+          value: {
+            type: Number,
+            value: 0,
+            notify: true
+          },
+          disabled: {
+            type: Boolean,
+            value: false,
+            notify: true,
+            reflectToAttribute: true
+          },
+          editable: {
+            type: Boolean
+          },
+          label: {
+            type: String
+          },
+          max: {
+            type: Number,
+            observer: '_maxChanged',
+            value: Number.MAX_SAFE_INTEGER || (Math.pow(2, 53) - 1)
+          },
+          min: {
+            type: Number,
+            observer: '_minChanged',
+            value: 0
+          },
+          pattern: {
+            type: Number,
+            value: '\\d*'
+          }
+        };
+      }
+
+      get _enabled() {
+        return !this.disabled && !this.readonly;
+      }
+
+      get _number() {
+        const val = parseInt(this.value);
+        return isNaN(val) ? this.min : val;  
+      }
+
+      _maxChanged(val) {
+        this.value = this._number > val ? val : this._number;
+      }
+
+      _minChanged(val) {
+        this.value = this._number > val ? val : this._number;
+      }
+      _minus() {
+        !this._minusDisabled() && (this.value = this._number - 1);
+        this.$.input.focus();
+      }
+
+      _plus() {
+        !this._plusDisabled() && (this.value = this._number + 1);
+        this.$.input.focus();
+      }
+
+      _minusDisabled(value, min, max, disabled, readonly){
+        return !this._enabled || this._number <= this.min;
+      }
+
+      _plusDisabled(value, min, max, disabled, readonly) {
+        return !this._enabled || this._number >= this.max;
+      }
+    }
+
+    window.customElements.define(SiptecModCantidad.is, SiptecModCantidad);
+  </script>
+</dom-module>
