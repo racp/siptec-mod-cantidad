@@ -2,6 +2,11 @@
   "name": "siptec-mod-cantidad",
   "description": "change amount simulate spinner",
   "main": "siptec-mod-cantidad.html",
+  "authors": [
+    "Siptec, S de RL"
+  ],
+  "license": "Apache-2.0",
+  "ignore": "bower_components",
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
     "vaadin-text-field": "vaadin/vaadin-text-field#^2.1.3",
